@@ -2,6 +2,7 @@ package ar.edu.unahur.obj2.command.invoker;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import ar.edu.unahur.obj2.command.tareas.*;
 import ar.edu.unahur.obj2.command.RobotDomestico;
+import ar.edu.unahur.obj2.command.excepciones.BateriaIncorrecta;
+import ar.edu.unahur.obj2.command.excepciones.NoTieneSuficienteBateria;
 import ar.edu.unahur.obj2.command.habitaciones.Habitacion;
 
 public class InvokerTest {
@@ -64,6 +67,37 @@ public class InvokerTest {
         invoker.ejecutarTareas();
         assertEquals(100.00, robot.getBateria());
         assertEquals(100.00, robot3.getBateria());
+    }
+
+    @Test
+    void siNoTieneBateriaSuficienteParaTareasTiraExcepcion(){
+        Habitacion hb2 = new Habitacion(60);
+        List<ITarea> tareas2 = List.of(new CLEAN(hb2), new LIGON(hb2), new LIGON(hb2));
+        RobotDomestico robot4 = new RobotDomestico(60.0);
+        Invoker inv = new Invoker(robot4, tareas2);
+
+        String mensajeEsperado = "No tiene la bateria suficiente para realizar estas tareas";
+
+        RuntimeException exception = assertThrows(NoTieneSuficienteBateria.class, () -> {
+            inv.ejecutarTareas();
+        });
+
+
+        assertEquals(mensajeEsperado, exception.getMessage());
+        
+    }
+
+    @Test
+    void alPonerUnValorIncorrectoDeBateriaLanzaUnaExcepcion(){
+        
+
+        String mensajeEsperado = "La bateria tiene un valor del 1 al 100";
+
+        RuntimeException excepcion = assertThrows(BateriaIncorrecta.class, () -> {
+            new RobotDomestico(150.00);
+        });
+
+        assertEquals(mensajeEsperado, excepcion.getMessage());
     }
     
 }

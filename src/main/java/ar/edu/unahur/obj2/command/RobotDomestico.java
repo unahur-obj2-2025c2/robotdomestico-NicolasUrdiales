@@ -12,7 +12,7 @@ public class RobotDomestico {
     private final List<ITarea> tareasRealizadas = new ArrayList<>();
     private Double bateria;
     public RobotDomestico(Double bateria) {
-        if(bateria < 0 && bateria > 100){
+        if(bateria < 0 || bateria > 100){
             throw new BateriaIncorrecta();
         }
         this.bateria = bateria;
